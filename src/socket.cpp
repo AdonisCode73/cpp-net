@@ -17,15 +17,15 @@
 #include <memory>
 
 namespace adonis::net {
-    Socket::Socket(int fd) : m_fd(fd) {}
-    Socket::~Socket() {
+    socket::socket(int fd) : m_fd(fd) {}
+    socket::~socket() {
         if (m_fd >= 0) {
             ::close(m_fd);
         }
     }
 
-    Socket::Socket(Socket&& other) noexcept : m_fd(std::exchange(other.m_fd, -1)) {};
-    Socket& Socket::operator=(Socket&& other) noexcept {
+    socket::socket(socket&& other) noexcept : m_fd(std::exchange(other.m_fd, -1)) {};
+    socket& socket::operator=(socket&& other) noexcept {
         if (this != &other) {
             if (m_fd >= 0) {
                 ::close(m_fd);
@@ -36,12 +36,7 @@ namespace adonis::net {
         return *this;
     }
 
-    Socket Socket::socket() {
-        addrinfo hints{};
-        hints.ai_family = AF_INET;
-        hints.ai_socktype = SOCK_STREAM;
-        hints.ai_flags = AI_PASSIVE;
-
+    socket tcp_listener(addrinfo hints, int level, int optname, int optval) {
         addrinfo* res = nullptr;
         if (int status = getaddrinfo(NULL, "8080", &hints, &res); status != 0) {
             throw std::runtime_error(std::string{"getaddrinfo: "} + gai_strerror(status));
@@ -53,11 +48,9 @@ namespace adonis::net {
             int fd = ::socket(p->ai_family, p->ai_socktype, p->ai_protocol);
             if (fd < 0) continue;
 
-            Socket sock{fd};
+            socket sock{fd};
 
-        int yes = 1;
-
-            if (setsockopt(sock.get_fd(), SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) < 0) {
+            if (setsockopt(sock.get_fd(), level, optname, &optval, sizeof(optval)) < 0) {
                 throw std::system_error(errno, std::system_category(), "setsockopt(REUSEADDR)");
             }
 

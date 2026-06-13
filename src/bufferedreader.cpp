@@ -12,7 +12,7 @@
 
 namespace adonis::net {
     
-    BufferedReader::BufferedReader(Socket& s, size_t bufferLength): m_sock(s), m_buffer(bufferLength) {}
+    BufferedReader::BufferedReader(socket& s, size_t bufferLength): m_sock(s), m_buffer(bufferLength) {}
     
     std::string BufferedReader::readLine(){
         std::string line;

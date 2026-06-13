@@ -8,13 +8,13 @@
 namespace adonis::net {
     class BufferedReader {
         public:
-            explicit BufferedReader(Socket& s, size_t bufferLength); 
+            explicit BufferedReader(socket& s, size_t bufferLength); 
 
             std::string readLine();
             std::string read_exact(const size_t n);
 
         private:
-            Socket& m_sock;
+            socket& m_sock;
             std::vector<char> m_buffer;
 
             size_t m_readPos = 0;

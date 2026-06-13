@@ -1,23 +1,24 @@
 #pragma once 
 
 #include <unistd.h>
+#include <netdb.h>
 
 namespace adonis::net {
-    class Socket {
+    class socket {
     public:
-        explicit Socket(int fd); 
-        ~Socket(); 
-        Socket(const Socket&) = delete;
-        Socket& operator=(const Socket&) = delete;
+        explicit socket(int fd); 
+        ~socket(); 
+        socket(const socket&) = delete;
+        socket& operator=(const socket&) = delete;
 
-        Socket(Socket&& other) noexcept;
-        Socket& operator=(Socket&& other) noexcept;
+        socket(socket&& other) noexcept;
+        socket& operator=(socket&& other) noexcept;
 
-        int get_fd() const { return m_fd; }
-        
-        Socket socket();
+        int get_fd() const { return m_fd; }  
 
     private:
         int m_fd = -1;
     };
+        socket tcp_listener(addrinfo hints, int level, int optname, int optval);
+        socket accept(const socket& listener);
 }
