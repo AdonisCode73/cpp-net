@@ -36,9 +36,12 @@ namespace adonis::net {
         return *this;
     }
 
-    socket tcp_listener(addrinfo hints, int level, int optname, int optval) {
+    socket tcp_listener(addrinfo hints, std::string name, std::string port, int level, int optname, int optval) {
         addrinfo* res = nullptr;
-        if (int status = getaddrinfo(NULL, "8080", &hints, &res); status != 0) {
+        if (int status = getaddrinfo(
+        name.empty() ? NULL : name.c_str(),
+    port.empty() ? NULL : port.c_str(),
+        &hints, &res); status != 0) {
             throw std::runtime_error(std::string{"getaddrinfo: "} + gai_strerror(status));
         }
     

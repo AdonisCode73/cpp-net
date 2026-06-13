@@ -2,6 +2,7 @@
 
 #include <unistd.h>
 #include <netdb.h>
+#include <string>
 
 namespace adonis::net {
     class socket {
@@ -19,6 +20,6 @@ namespace adonis::net {
     private:
         int m_fd = -1;
     };
-        socket tcp_listener(addrinfo hints, int level, int optname, int optval);
+        socket tcp_listener(addrinfo hints, std::string name, std::string port, int level, int optname, int optval);
         socket accept(const socket& listener);
 }
