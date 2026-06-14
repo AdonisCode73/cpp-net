@@ -20,6 +20,6 @@ namespace adonis::net {
     private:
         int m_fd = -1;
     };
-        socket tcp_listener(addrinfo hints, std::string name, std::string port, int level, int optname, int optval);
+        socket ipv4_tcp_listener(std::string name, std::string port, int optval);
         socket accept(const socket& listener);
 }

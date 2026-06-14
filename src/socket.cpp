@@ -36,7 +36,16 @@ namespace adonis::net {
         return *this;
     }
 
-    socket tcp_listener(addrinfo hints, std::string name, std::string port, int level, int optname, int optval) {
+    socket ipv4_tcp_listener(std::string name, std::string port, int optval) {
+
+        addrinfo hints{};
+        hints.ai_family = AF_INET;
+        hints.ai_socktype = SOCK_STREAM;
+
+        if (name.empty()) {
+            hints.ai_flags = AI_PASSIVE;
+        }
+        
         addrinfo* res = nullptr;
         if (int status = getaddrinfo(
         name.empty() ? NULL : name.c_str(),
@@ -52,9 +61,11 @@ namespace adonis::net {
             if (fd < 0) continue;
 
             socket sock{fd};
-
-            if (setsockopt(sock.get_fd(), level, optname, &optval, sizeof(optval)) < 0) {
-                throw std::system_error(errno, std::system_category(), "setsockopt(REUSEADDR)");
+            
+            if (optval) {
+                if (setsockopt(sock.get_fd(), SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0) {
+                    throw std::system_error(errno, std::system_category(), "setsockopt(REUSEADDR)");
+                }
             }
 
             if (bind(sock.get_fd(), p->ai_addr, p->ai_addrlen) == 0) {
