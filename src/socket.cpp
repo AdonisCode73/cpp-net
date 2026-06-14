@@ -1,4 +1,5 @@
 #include "adonis/net/socket.h"
+#include <filesystem>
 #include <unistd.h>
 #include <utility>
 
@@ -15,6 +16,7 @@
 #include <netdb.h>
 #include <system_error>
 #include <memory>
+#include <expected>
 
 namespace adonis::net {
     socket::socket(int fd) : m_fd(fd) {}
@@ -74,5 +76,18 @@ namespace adonis::net {
         }
 
         throw std::runtime_error("could not bind to any address");
-}
+    }
+
+    std::expected<socket, std::error_code> accept(const socket& listener) {
+        sockaddr_storage theirAddr;
+        socklen_t addrSize = sizeof(theirAddr);
+
+        int fd = ::accept(listener.get_fd(), reinterpret_cast<sockaddr *>(&theirAddr),& addrSize);
+
+        if (fd < 0) {
+            return std::unexpected(std::error_code(errno, std::system_category()));
+        }
+        
+        return socket{fd};
+    }
 }

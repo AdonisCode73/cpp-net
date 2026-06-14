@@ -1,8 +1,10 @@
 #pragma once 
 
+#include <system_error>
 #include <unistd.h>
 #include <netdb.h>
 #include <string>
+#include <expected>
 
 namespace adonis::net {
     class socket {
@@ -21,5 +23,5 @@ namespace adonis::net {
         int m_fd = -1;
     };
         socket ipv4_tcp_listener(std::string name, std::string port, int optval);
-        socket accept(const socket& listener);
+        std::expected<socket, std::error_code> accept(const socket& listener);
 }
